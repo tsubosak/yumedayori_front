@@ -12,6 +12,7 @@ import type { AppProps } from "next/app"
 import Head from "next/head"
 import { API_ENDPOINT } from "../constants"
 import { IconSun } from "@tabler/icons"
+import { SWRConfig } from "swr"
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -22,44 +23,52 @@ function MyApp({ Component, pageProps }: AppProps) {
           content="width=device-width, viewport-fit=cover"
         />
       </Head>
-      <MantineProvider withGlobalStyles withNormalizeCSS>
-        <AppShell
-          padding="md"
-          header={
-            <Header height={60}>
-              <Group sx={{ height: "100%" }} px={20} position="apart">
-                <Text>yumedayori</Text>
-                <ActionIcon variant="default" onClick={() => {}} size={30}>
-                  <IconSun size={16} />
-                </ActionIcon>
-              </Group>
-            </Header>
-          }
-          footer={
-            <Box
-              pt="md"
-              px="md"
-              sx={{
-                paddingBottom: "max(env(safe-area-inset-bottom), 1rem)",
-              }}
-            >
-              <Center>
-                <Text>yumedayori-front / API Endpoint: {API_ENDPOINT}</Text>
-              </Center>
-            </Box>
-          }
-          styles={(theme) => ({
-            main: {
-              backgroundColor:
-                theme.colorScheme === "dark"
-                  ? theme.colors.dark[8]
-                  : theme.colors.gray[0],
-            },
-          })}
-        >
-          <Component {...pageProps} />
-        </AppShell>
-      </MantineProvider>
+      <SWRConfig
+        value={{
+          refreshInterval: 0,
+          fetcher: (resource, init) =>
+            fetch(API_ENDPOINT + resource, init).then((res) => res.json()),
+        }}
+      >
+        <MantineProvider withGlobalStyles withNormalizeCSS>
+          <AppShell
+            padding="md"
+            header={
+              <Header height={60}>
+                <Group sx={{ height: "100%" }} px={20} position="apart">
+                  <Text>yumedayori</Text>
+                  <ActionIcon variant="default" onClick={() => {}} size={30}>
+                    <IconSun size={16} />
+                  </ActionIcon>
+                </Group>
+              </Header>
+            }
+            footer={
+              <Box
+                pt="md"
+                px="md"
+                sx={{
+                  paddingBottom: "max(env(safe-area-inset-bottom), 1rem)",
+                }}
+              >
+                <Center>
+                  <Text>yumedayori-front / API Endpoint: {API_ENDPOINT}</Text>
+                </Center>
+              </Box>
+            }
+            styles={(theme) => ({
+              main: {
+                backgroundColor:
+                  theme.colorScheme === "dark"
+                    ? theme.colors.dark[8]
+                    : theme.colors.gray[0],
+              },
+            })}
+          >
+            <Component {...pageProps} />
+          </AppShell>
+        </MantineProvider>
+      </SWRConfig>
     </>
   )
 }
