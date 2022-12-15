@@ -5,8 +5,10 @@ import Link from "next/link"
 const Home: NextPage = () => {
   return (
     <Container>
-      <Title order={1}>yumedayori-front</Title>
-      <Link href={"/artists/1"}>
+      <Title order={1} mb="xl">
+        yumedayori-front
+      </Title>
+      <Link href={"/artists/1"} legacyBehavior>
         <Anchor>artist</Anchor>
       </Link>
     </Container>
