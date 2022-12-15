@@ -7,12 +7,14 @@ import {
   MantineProvider,
   Center,
   Text,
+  Anchor,
 } from "@mantine/core"
 import type { AppProps } from "next/app"
 import Head from "next/head"
 import { API_ENDPOINT } from "../constants"
 import { IconSun } from "@tabler/icons"
 import { SWRConfig } from "swr"
+import Link from "next/link"
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -36,7 +38,9 @@ function MyApp({ Component, pageProps }: AppProps) {
             header={
               <Header height={60}>
                 <Group sx={{ height: "100%" }} px={20} position="apart">
-                  <Text>yumedayori</Text>
+                  <Link href="/" legacyBehavior>
+                    <Anchor>yumedayori</Anchor>
+                  </Link>
                   <ActionIcon variant="default" onClick={() => {}} size={30}>
                     <IconSun size={16} />
                   </ActionIcon>
