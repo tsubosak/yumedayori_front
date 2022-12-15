@@ -1,25 +1,17 @@
 import type { GetStaticPaths, GetStaticProps, NextPage } from "next"
-import {
-  Anchor,
-  Avatar,
-  Box,
-  Center,
-  Container,
-  Image,
-  SimpleGrid,
-  Text,
-  Title,
-} from "@mantine/core"
+import { Anchor, Box, Container, Grid, SimpleGrid, Title } from "@mantine/core"
 import React from "react"
 import Head from "next/head"
 import useSWR from "swr"
 import { FullArtist } from "../../types"
-import { IconMusic } from "@tabler/icons"
+import { IconMusic, IconUserCircle } from "@tabler/icons"
 import Link from "next/link"
 import {
+  CREDITED_AS_JA,
   PARENT_TYPE_JA_BY_CHILD,
   PARENT_TYPE_JA_BY_PARENT,
 } from "../../constants"
+import { IconWithText } from "../../components/IconWithText"
 
 const ArtistFetchWrap = ({ artistId }: { artistId: number }) => {
   const { data, error, isLoading } = useSWR<FullArtist>(`/artists/${artistId}`)
@@ -42,8 +34,10 @@ const ArtistFetchWrap = ({ artistId }: { artistId: number }) => {
       </ruby>
       {data.parents.length > 0 ? (
         <Box my="lg">
-          <Title order={2}>親アーティスト</Title>
-          <SimpleGrid spacing="md" cols={3}>
+          <Title order={2} mb="md">
+            親アーティスト
+          </Title>
+          <SimpleGrid cols={3}>
             {data.parents.map(({ parent, parentType }) => (
               <Link
                 key={parent.id}
@@ -51,18 +45,11 @@ const ArtistFetchWrap = ({ artistId }: { artistId: number }) => {
                 legacyBehavior
               >
                 <Anchor>
-                  <Center>
-                    <Avatar
-                      m="lg"
-                      alt={parent.name}
-                      src={null}
-                      //caption={}
-                      size="xl"
-                    />
-                    <Text>
-                      {parent.name} ({PARENT_TYPE_JA_BY_CHILD[parentType]})
-                    </Text>
-                  </Center>
+                  <IconWithText
+                    text={`${parent.name} (${PARENT_TYPE_JA_BY_CHILD[parentType]})`}
+                  >
+                    <IconUserCircle size="xl" />
+                  </IconWithText>
                 </Anchor>
               </Link>
             ))}
@@ -73,23 +60,18 @@ const ArtistFetchWrap = ({ artistId }: { artistId: number }) => {
       )}
       {data.children.length > 0 ? (
         <Box my="lg">
-          <Title order={2}>子アーティスト</Title>
-          <SimpleGrid spacing="md" cols={3}>
+          <Title order={2} mb="md">
+            子アーティスト
+          </Title>
+          <SimpleGrid cols={3}>
             {data.children.map(({ child, parentType }) => (
               <Link key={child.id} href={`/artists/${child.id}`} legacyBehavior>
                 <Anchor>
-                  <Center>
-                    <Avatar
-                      m="lg"
-                      alt={child.name}
-                      src={null}
-                      //caption={}
-                      size="xl"
-                    />
-                    <Text>
-                      {child.name} ({PARENT_TYPE_JA_BY_PARENT[parentType]})
-                    </Text>
-                  </Center>
+                  <IconWithText
+                    text={`${child.name} (${PARENT_TYPE_JA_BY_PARENT[parentType]})`}
+                  >
+                    <IconUserCircle size="xl" />
+                  </IconWithText>
                 </Anchor>
               </Link>
             ))}
@@ -99,27 +81,47 @@ const ArtistFetchWrap = ({ artistId }: { artistId: number }) => {
         <></>
       )}
       <Box my="lg">
-        <Title order={2}>楽曲</Title>
-        <SimpleGrid spacing="md" cols={3}>
+        <Title order={2} mb="md">
+          楽曲
+        </Title>
+        <SimpleGrid cols={3} spacing="md">
           {data.tracks.map((track) => (
             <Link key={track.id} href={`/tracks/${track.id}`} legacyBehavior>
               <Anchor>
-                <Image
-                  m="lg"
-                  alt={track.title}
-                  withPlaceholder
-                  placeholder={
-                    <Box>
-                      <IconMusic size="3rem" />
-                    </Box>
-                  }
-                  caption={track.title}
-                />
+                <IconWithText text={track.title}>
+                  <IconMusic size="3rem" />
+                </IconWithText>
               </Anchor>
             </Link>
           ))}
         </SimpleGrid>
       </Box>
+      {data.credits.length > 0 ? (
+        <Box my="lg">
+          <Title order={2} mb="md">
+            クレジット
+          </Title>
+          <Grid>
+            {data.credits.map(({ track, creditedAs }) => (
+              <Grid.Col key={track.id} span={4}>
+                <Link href={`/tracks/${track.id}`} legacyBehavior>
+                  <Anchor>
+                    <IconWithText
+                      text={`${track.title} (${
+                        CREDITED_AS_JA[creditedAs] || creditedAs
+                      })`}
+                    >
+                      <IconMusic size="3rem" />
+                    </IconWithText>
+                  </Anchor>
+                </Link>
+              </Grid.Col>
+            ))}
+          </Grid>
+        </Box>
+      ) : (
+        <></>
+      )}
     </>
   )
 }

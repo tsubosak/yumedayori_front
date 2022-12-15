@@ -9,3 +9,9 @@ export const PARENT_TYPE_JA_BY_PARENT = {
   CONSIST_OF: "所属",
   VOICED_BY: "ボーカル",
 }
+
+export const CREDITED_AS_JA = {
+  COMPOSER: "作曲",
+  LYRICIST: "作詞",
+  ARRANGER: "編曲",
+}
