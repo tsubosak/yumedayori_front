@@ -44,3 +44,7 @@ export type FullTrack = Track & {
   albums: Album[]
   credits: (Credit & { artist: Artist })[]
 }
+
+export type FullAlbum = Album & {
+  tracks: Track[]
+}
