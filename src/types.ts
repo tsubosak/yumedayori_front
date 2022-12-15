@@ -48,3 +48,12 @@ export type FullTrack = Track & {
 export type FullAlbum = Album & {
   tracks: Track[]
 }
+
+export type Relationships = {
+  nodes: {
+    groupId: "Artist" | "Track" | "Album"
+    id: string
+    label: string
+  }[]
+  edges: { source: string; target: string; label: string }[]
+}

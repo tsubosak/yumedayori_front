@@ -15,3 +15,9 @@ export const CREDITED_AS_JA = {
   LYRICIST: "作詞",
   ARRANGER: "編曲",
 }
+
+export const GRAPH_LABEL_JA = {
+  BY: "歌唱",
+  TRACK_OF: "収録",
+  CONSIST_OF: "所属",
+}

@@ -34,7 +34,6 @@ function MyApp({ Component, pageProps }: AppProps) {
       >
         <MantineProvider withGlobalStyles withNormalizeCSS>
           <AppShell
-            padding="md"
             header={
               <Header height={60}>
                 <Group sx={{ height: "100%" }} px={20} position="apart">
