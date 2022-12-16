@@ -40,9 +40,6 @@ function MyApp({ Component, pageProps }: AppProps) {
                   <Link href="/" legacyBehavior>
                     <Anchor>yumedayori</Anchor>
                   </Link>
-                  <ActionIcon variant="default" onClick={() => {}} size={30}>
-                    <IconSun size={16} />
-                  </ActionIcon>
                 </Group>
               </Header>
             }
