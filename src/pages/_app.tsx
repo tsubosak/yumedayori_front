@@ -1,5 +1,4 @@
 import {
-  ActionIcon,
   AppShell,
   Box,
   Group,
@@ -12,9 +11,9 @@ import {
 import type { AppProps } from "next/app"
 import Head from "next/head"
 import { API_ENDPOINT } from "../constants"
-import { IconSun } from "@tabler/icons"
 import { SWRConfig } from "swr"
 import Link from "next/link"
+import { Search } from "../components/Search"
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -40,6 +39,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                   <Link href="/" legacyBehavior>
                     <Anchor>yumedayori</Anchor>
                   </Link>
+                  <Search />
                 </Group>
               </Header>
             }
