@@ -56,7 +56,7 @@ const ArtistFetchWrap = ({ artistId }: { artistId: number }) => {
                     <IconWithText
                       text={`${parent.name} (${PARENT_TYPE_JA_BY_CHILD[parentType]})`}
                     >
-                      <IconUserCircle size="xl" />
+                      <IconUserCircle size="3rem" />
                     </IconWithText>
                   </Anchor>
                 </Link>
@@ -82,7 +82,7 @@ const ArtistFetchWrap = ({ artistId }: { artistId: number }) => {
                     <IconWithText
                       text={`${child.name} (${PARENT_TYPE_JA_BY_PARENT[parentType]})`}
                     >
-                      <IconUserCircle size="xl" />
+                      <IconUserCircle size="3rem" />
                     </IconWithText>
                   </Anchor>
                 </Link>

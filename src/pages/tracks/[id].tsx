@@ -43,7 +43,7 @@ const TrackFetchWrap = ({ trackId }: { trackId: number }) => {
                 >
                   <Anchor>
                     <IconWithText text={artist.name}>
-                      <IconUserCircle size="xl" />
+                      <IconUserCircle size="3rem" />
                     </IconWithText>
                   </Anchor>
                 </Link>
@@ -67,7 +67,7 @@ const TrackFetchWrap = ({ trackId }: { trackId: number }) => {
                 >
                   <Anchor>
                     <IconWithText text={album.title}>
-                      <IconUserCircle size="xl" />
+                      <IconUserCircle size="3rem" />
                     </IconWithText>
                   </Anchor>
                 </Link>
@@ -95,7 +95,7 @@ const TrackFetchWrap = ({ trackId }: { trackId: number }) => {
                         CREDITED_AS_JA[creditedAs] || creditedAs
                       })`}
                     >
-                      <IconUserCircle size="xl" />
+                      <IconUserCircle size="3rem" />
                     </IconWithText>
                   </Anchor>
                 </Link>
