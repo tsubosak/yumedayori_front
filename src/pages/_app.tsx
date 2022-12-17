@@ -27,8 +27,18 @@ function MyApp({ Component, pageProps }: AppProps) {
       <SWRConfig
         value={{
           refreshInterval: 0,
-          fetcher: (resource, init) =>
-            fetch(API_ENDPOINT + resource, init).then((res) => res.json()),
+          fetcher: async (resource, init) => {
+            const res = await fetch(API_ENDPOINT + resource, init)
+            if (!res.ok) {
+              const error = new Error(
+                "An error occurred while fetching the data."
+              )
+              error.message = await res.json()
+              error.name = res.status.toString()
+              throw error
+            }
+            return res.json()
+          },
         }}
       >
         <MantineProvider withGlobalStyles withNormalizeCSS>

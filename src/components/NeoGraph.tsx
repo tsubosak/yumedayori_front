@@ -12,14 +12,15 @@ const COLOR_BY_TYPE = {
 }
 
 export const NeoGraph = ({ path, focus }: { path: string; focus?: string }) => {
-  const { data } = useSWR<Relationships>(path, null, {
+  const swr = useSWR<Relationships>(path, null, {
     revalidateOnFocus: false,
     refreshInterval: 0,
+    shouldRetryOnError: false,
   })
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const container = ref.current
-    if (!container || !data) {
+    if (!container || !swr.data || swr.isLoading || swr.error) {
       return
     }
     const graph = new G6.Graph({
@@ -56,35 +57,25 @@ export const NeoGraph = ({ path, focus }: { path: string; focus?: string }) => {
     })
     graph.data({
       nodes: Array.from(
-        data.nodes
-          .reduce((map, node) => {
-            map.set(node.id, {
-              ...node,
-              color: COLOR_BY_TYPE[node.groupId],
-              size: node.label === focus ? 50 : undefined,
-              x: node.label === focus ? 0 : undefined,
-              y: node.label === focus ? 0 : undefined,
-            })
-            return map
-          }, new Map<string, NodeConfig>())
-          .values()
+        swr.data.nodes.map((node) => ({
+          ...node,
+          color: COLOR_BY_TYPE[node.groupId],
+          size: node.label === focus ? 50 : undefined,
+          x: node.label === focus ? 0 : undefined,
+          y: node.label === focus ? 0 : undefined,
+        }))
       ),
       edges: Array.from(
-        data.edges
-          .reduce((map, edge) => {
-            map.set(edge.source + edge.target, {
-              ...edge,
-              label:
-                CREDITED_AS_JA[edge.label as never] ||
-                GRAPH_LABEL_JA[edge.label as never] ||
-                edge.label,
-              labelCfg: {
-                style: { opacity: 0.5 },
-              },
-            })
-            return map
-          }, new Map<string, EdgeConfig>())
-          .values()
+        swr.data.edges.map((edge) => ({
+          ...edge,
+          label:
+            CREDITED_AS_JA[edge.label as never] ||
+            GRAPH_LABEL_JA[edge.label as never] ||
+            edge.label,
+          labelCfg: {
+            style: { opacity: 0.5 },
+          },
+        }))
       ),
     })
     graph.render()
@@ -110,7 +101,7 @@ export const NeoGraph = ({ path, focus }: { path: string; focus?: string }) => {
       graph.off("node:click", onNodeClick)
       graph.destroy()
     }
-  }, [data, ref, focus])
+  }, [swr, ref, focus])
   return (
     <Box
       style={{
