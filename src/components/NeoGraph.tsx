@@ -12,7 +12,10 @@ const COLOR_BY_TYPE = {
 }
 
 export const NeoGraph = ({ path, focus }: { path: string; focus?: string }) => {
-  const { data } = useSWR<Relationships>(path)
+  const { data } = useSWR<Relationships>(path, null, {
+    revalidateOnFocus: false,
+    refreshInterval: 0,
+  })
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const container = ref.current
