@@ -19,6 +19,6 @@ export const CREDITED_AS_JA = {
 export const GRAPH_LABEL_JA = {
   BY: "歌唱",
   TRACK_OF: "収録",
-  CONSIST_OF: "所属",
+  CONSIST_OF: "メンバー",
   VOICED_BY: "声優",
 }
