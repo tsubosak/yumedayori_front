@@ -8,6 +8,8 @@ import { IconMusic } from "@tabler/icons"
 import Link from "next/link"
 import { IconWithText } from "../../components/IconWithText"
 import dynamic from "next/dynamic"
+import Error from "next/error"
+import { FetchError } from "../../error"
 const NeoGraph = dynamic(() => import("../../components/NeoGraph"), {
   ssr: false,
 })
@@ -15,6 +17,8 @@ const NeoGraph = dynamic(() => import("../../components/NeoGraph"), {
 const AlbumFetchWrap = ({ albumId }: { albumId: number }) => {
   const { data, error, isLoading } = useSWR<FullAlbum>(`/albums/${albumId}`)
 
+  if (error instanceof FetchError)
+    return <Error statusCode={error.statusCode}></Error>
   if (error) return <div>failed to load</div>
   if (isLoading) return <div>loading...</div>
   if (!data) return <></>

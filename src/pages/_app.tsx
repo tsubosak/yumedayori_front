@@ -14,6 +14,7 @@ import { API_ENDPOINT } from "../constants"
 import { SWRConfig } from "swr"
 import Link from "next/link"
 import { Search } from "../components/Search"
+import { FetchError } from "../error"
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -30,12 +31,13 @@ function MyApp({ Component, pageProps }: AppProps) {
           fetcher: async (resource, init) => {
             const res = await fetch(API_ENDPOINT + resource, init)
             if (!res.ok) {
-              const error = new Error(
-                "An error occurred while fetching the data."
-              )
-              error.message = await res.json()
-              error.name = res.status.toString()
-              throw error
+              const body: { message: string; statusCode: number } | null =
+                await res.json().catch(() => null)
+              if (body) {
+                throw new FetchError(body.message, body.statusCode)
+              } else {
+                throw new Error(await res.text())
+              }
             }
             return res.json()
           },

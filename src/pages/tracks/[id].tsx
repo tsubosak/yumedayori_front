@@ -9,6 +9,8 @@ import Link from "next/link"
 import { CREDITED_AS_JA } from "../../constants"
 import { IconWithText } from "../../components/IconWithText"
 import dynamic from "next/dynamic"
+import { FetchError } from "../../error"
+import Error from "next/error"
 const NeoGraph = dynamic(() => import("../../components/NeoGraph"), {
   ssr: false,
 })
@@ -16,6 +18,8 @@ const NeoGraph = dynamic(() => import("../../components/NeoGraph"), {
 const TrackFetchWrap = ({ trackId }: { trackId: number }) => {
   const { data, error, isLoading } = useSWR<FullTrack>(`/tracks/${trackId}`)
 
+  if (error instanceof FetchError)
+    return <Error statusCode={error.statusCode}></Error>
   if (error) return <div>failed to load</div>
   if (isLoading) return <div>loading...</div>
   if (!data) return <></>
