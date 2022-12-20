@@ -1,4 +1,8 @@
-export const API_ENDPOINT = "http://localhost:7000"
+export const API_ENDPOINT = process.env.NEXT_PUBLIC_API_ENDPOINT
+
+if (!API_ENDPOINT) {
+  throw new Error("NEXT_PUBLIC_API_ENDPOINT env is not defined")
+}
 
 export const PARENT_TYPE_JA_BY_CHILD = {
   CONSIST_OF: "メンバー",
