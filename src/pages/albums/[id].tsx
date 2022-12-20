@@ -40,7 +40,12 @@ const AlbumFetchWrap = ({ albumId }: { albumId: number }) => {
           </Title>
           <SimpleGrid cols={3} spacing="md">
             {data.tracks.map((track) => (
-              <Link key={track.id} href={`/tracks/${track.id}`} legacyBehavior>
+              <Link
+                prefetch={false}
+                key={track.id}
+                href={`/tracks/${track.id}`}
+                legacyBehavior
+              >
                 <Anchor>
                   <IconWithText text={track.title}>
                     <IconMusic size="3rem" />

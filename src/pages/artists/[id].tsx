@@ -52,6 +52,7 @@ const ArtistFetchWrap = ({ artistId }: { artistId: number }) => {
             <SimpleGrid cols={3}>
               {data.parents.map(({ parent, parentType }) => (
                 <Link
+                  prefetch={false}
                   key={parent.id}
                   href={`/artists/${parent.id}`}
                   legacyBehavior
@@ -78,6 +79,7 @@ const ArtistFetchWrap = ({ artistId }: { artistId: number }) => {
             <SimpleGrid cols={3}>
               {data.children.map(({ child, parentType }) => (
                 <Link
+                  prefetch={false}
                   key={child.id}
                   href={`/artists/${child.id}`}
                   legacyBehavior
@@ -102,7 +104,12 @@ const ArtistFetchWrap = ({ artistId }: { artistId: number }) => {
           </Title>
           <SimpleGrid cols={3} spacing="md">
             {data.tracks.map((track) => (
-              <Link key={track.id} href={`/tracks/${track.id}`} legacyBehavior>
+              <Link
+                prefetch={false}
+                key={track.id}
+                href={`/tracks/${track.id}`}
+                legacyBehavior
+              >
                 <Anchor>
                   <IconWithText text={track.title}>
                     <IconMusic size="3rem" />
@@ -120,7 +127,11 @@ const ArtistFetchWrap = ({ artistId }: { artistId: number }) => {
             <Grid>
               {data.credits.map(({ track, creditedAs }) => (
                 <Grid.Col key={track.id} span={4}>
-                  <Link href={`/tracks/${track.id}`} legacyBehavior>
+                  <Link
+                    prefetch={false}
+                    href={`/tracks/${track.id}`}
+                    legacyBehavior
+                  >
                     <Anchor>
                       <IconWithText
                         text={`${track.title} (${

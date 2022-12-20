@@ -41,6 +41,7 @@ const TrackFetchWrap = ({ trackId }: { trackId: number }) => {
             <SimpleGrid spacing="sm" cols={3}>
               {data.artists.map((artist) => (
                 <Link
+                  prefetch={false}
                   key={artist.id}
                   href={`/artists/${artist.id}`}
                   legacyBehavior
@@ -65,6 +66,7 @@ const TrackFetchWrap = ({ trackId }: { trackId: number }) => {
             <SimpleGrid spacing="sm" cols={3}>
               {data.albums.map((album) => (
                 <Link
+                  prefetch={false}
                   key={album.id}
                   href={`/albums/${album.id}`}
                   legacyBehavior
@@ -89,6 +91,7 @@ const TrackFetchWrap = ({ trackId }: { trackId: number }) => {
             <SimpleGrid cols={3}>
               {data.credits.map(({ artist, creditedAs }) => (
                 <Link
+                  prefetch={false}
                   key={artist.id}
                   href={`/artists/${artist.id}`}
                   legacyBehavior

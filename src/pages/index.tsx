@@ -8,7 +8,7 @@ const Home: NextPage = () => {
       <Title order={1} mb="xl">
         yumedayori-front
       </Title>
-      <Link href={"/artists/1"} legacyBehavior>
+      <Link prefetch={false} href={"/artists/1"} legacyBehavior>
         <Anchor>artist</Anchor>
       </Link>
     </Container>

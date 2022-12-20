@@ -51,7 +51,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             header={
               <Header height={60}>
                 <Group sx={{ height: "100%" }} px={20} position="apart">
-                  <Link href="/" legacyBehavior>
+                  <Link prefetch={false} href="/" legacyBehavior>
                     <Anchor>yumedayori</Anchor>
                   </Link>
                   <Select
