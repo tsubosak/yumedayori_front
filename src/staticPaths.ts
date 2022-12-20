@@ -8,7 +8,6 @@ export const generateStaticPaths = async (
   const trackIds = new Set<number>(CONSTANT_TRACK_IDS)
   const albums = new Set<number>()
   for (const id of trackIds.values()) {
-    console.log("fetching track", id)
     const res = await fetch(API_ENDPOINT + `/tracks/${id}`)
     const json: FullTrack = await res.json()
     for (const artist of json.artists) {
@@ -21,8 +20,8 @@ export const generateStaticPaths = async (
       artistIds.add(credit.artist.id)
     }
   }
-  for (const id of artistIds.values()) {
-    console.log("fetching artist", id)
+
+  for (const id of Array.from(new Set(artistIds).values())) {
     const res = await fetch(API_ENDPOINT + `/artists/${id}`)
     const json: FullArtist = await res.json()
     for (const child of json.children) {
@@ -31,13 +30,14 @@ export const generateStaticPaths = async (
     for (const parent of json.parents) {
       artistIds.add(parent.parent.id)
     }
-    for (const track of json.tracks) {
+    /*for (const track of json.tracks) {
       trackIds.add(track.id)
-    }
+    }*/
     for (const credit of json.credits) {
       trackIds.add(credit.track.id)
     }
   }
+  /*
   if (type === "track") {
     for (const id of albums.values()) {
       console.log("fetching album", id)
@@ -47,7 +47,7 @@ export const generateStaticPaths = async (
         trackIds.add(track.id)
       }
     }
-  }
+  }*/
 
   switch (type) {
     case "artist":

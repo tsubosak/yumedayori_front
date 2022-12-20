@@ -2,7 +2,7 @@ import type { GetStaticPaths, GetStaticProps, NextPage } from "next"
 import { Anchor, Box, Container, SimpleGrid, Title } from "@mantine/core"
 import React from "react"
 import Head from "next/head"
-import useSWR from "swr"
+import useSWR, { SWRConfig } from "swr"
 import { FullAlbum } from "../../types"
 import { IconMusic } from "@tabler/icons"
 import Link from "next/link"
@@ -10,6 +10,8 @@ import { IconWithText } from "../../components/IconWithText"
 import dynamic from "next/dynamic"
 import Error from "next/error"
 import { FetchError } from "../../error"
+import { generateStaticPaths } from "../../staticPaths"
+import { API_ENDPOINT } from "../../constants"
 const NeoGraph = dynamic(() => import("../../components/NeoGraph"), {
   ssr: false,
 })
@@ -17,10 +19,10 @@ const NeoGraph = dynamic(() => import("../../components/NeoGraph"), {
 const AlbumFetchWrap = ({ albumId }: { albumId: number }) => {
   const { data, error, isLoading } = useSWR<FullAlbum>(`/albums/${albumId}`)
 
-  if (error instanceof FetchError)
+  if (!data && error instanceof FetchError)
     return <Error statusCode={error.statusCode}></Error>
-  if (error) return <div>failed to load</div>
-  if (isLoading) return <div>loading...</div>
+  if (!data && error) return <div>failed to load</div>
+  if (!data && isLoading) return <div>loading...</div>
   if (!data) return <></>
 
   return (
@@ -62,19 +64,39 @@ const AlbumFetchWrap = ({ albumId }: { albumId: number }) => {
 
 const AlbumDetailWrap: NextPage<{
   albumId: number
-}> = ({ albumId }) => {
+  fallback: Record<string, FullAlbum>
+}> = ({ albumId, fallback }) => {
   if (!albumId) {
     return <></>
   }
-  return <AlbumFetchWrap albumId={albumId} />
+  return (
+    <SWRConfig value={{ fallback }}>
+      <AlbumFetchWrap albumId={albumId} />
+    </SWRConfig>
+  )
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  return { props: { albumId: params?.id } }
+  const fullAlbum = await fetch(API_ENDPOINT + `/albums/${params?.id}`)
+  return {
+    props: {
+      albumId: params?.id,
+      fallback: {
+        [`/albums/${params?.id}`]: await fullAlbum.json(),
+      },
+    },
+  }
 }
 
-export const getStaticPaths: GetStaticPaths = () => {
-  return { paths: [], fallback: true }
+export const getStaticPaths: GetStaticPaths = async () => {
+  const ids =
+    process.env.NODE_ENV === "production"
+      ? await generateStaticPaths("album")
+      : []
+  return {
+    paths: ids.map((id) => ({ params: { id: id.toString() } })),
+    fallback: true,
+  }
 }
 
 export default AlbumDetailWrap

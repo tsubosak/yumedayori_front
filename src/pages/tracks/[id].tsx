@@ -2,15 +2,16 @@ import type { GetStaticPaths, GetStaticProps, NextPage } from "next"
 import { Anchor, Box, Container, SimpleGrid, Title } from "@mantine/core"
 import React from "react"
 import Head from "next/head"
-import useSWR from "swr"
+import useSWR, { SWRConfig } from "swr"
 import { FullTrack } from "../../types"
 import { IconUserCircle } from "@tabler/icons"
 import Link from "next/link"
-import { CREDITED_AS_JA } from "../../constants"
+import { API_ENDPOINT, CREDITED_AS_JA } from "../../constants"
 import { IconWithText } from "../../components/IconWithText"
 import dynamic from "next/dynamic"
 import { FetchError } from "../../error"
 import Error from "next/error"
+import { generateStaticPaths } from "../../staticPaths"
 const NeoGraph = dynamic(() => import("../../components/NeoGraph"), {
   ssr: false,
 })
@@ -18,10 +19,10 @@ const NeoGraph = dynamic(() => import("../../components/NeoGraph"), {
 const TrackFetchWrap = ({ trackId }: { trackId: number }) => {
   const { data, error, isLoading } = useSWR<FullTrack>(`/tracks/${trackId}`)
 
-  if (error instanceof FetchError)
+  if (!data && error instanceof FetchError)
     return <Error statusCode={error.statusCode}></Error>
-  if (error) return <div>failed to load</div>
-  if (isLoading) return <div>loading...</div>
+  if (!data && error) return <div>failed to load</div>
+  if (!data && isLoading) return <div>loading...</div>
   if (!data) return <></>
 
   return (
@@ -119,19 +120,39 @@ const TrackFetchWrap = ({ trackId }: { trackId: number }) => {
 
 const TrackDetailWrap: NextPage<{
   trackId: number
-}> = ({ trackId }) => {
+  fallback: Record<string, FullTrack>
+}> = ({ trackId, fallback }) => {
   if (!trackId) {
     return <></>
   }
-  return <TrackFetchWrap trackId={trackId} />
+  return (
+    <SWRConfig value={{ fallback }}>
+      <TrackFetchWrap trackId={trackId} />
+    </SWRConfig>
+  )
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  return { props: { trackId: params?.id } }
+  const fullTrack = await fetch(API_ENDPOINT + `/tracks/${params?.id}`)
+  return {
+    props: {
+      trackId: params?.id,
+      fallback: {
+        [`/tracks/${params?.id}`]: await fullTrack.json(),
+      },
+    },
+  }
 }
 
-export const getStaticPaths: GetStaticPaths = () => {
-  return { paths: [], fallback: true }
+export const getStaticPaths: GetStaticPaths = async () => {
+  const ids =
+    process.env.NODE_ENV === "production"
+      ? await generateStaticPaths("track")
+      : []
+  return {
+    paths: ids.map((id) => ({ params: { id: id.toString() } })),
+    fallback: true,
+  }
 }
 
 export default TrackDetailWrap
