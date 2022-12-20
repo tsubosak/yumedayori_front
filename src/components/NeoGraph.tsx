@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import G6, { EdgeConfig, IG6GraphEvent, NodeConfig } from "@antv/g6"
+import G6, { IG6GraphEvent } from "@antv/g6"
 import useSWR from "swr"
 import { Relationships } from "../types"
 import { Box } from "@mantine/core"
@@ -20,7 +20,7 @@ export const NeoGraph = ({ path, focus }: { path: string; focus?: string }) => {
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const container = ref.current
-    if (!container || !swr.data || swr.isLoading || swr.error) {
+    if (!container || !swr.data) {
       return
     }
     const graph = new G6.Graph({
@@ -30,12 +30,7 @@ export const NeoGraph = ({ path, focus }: { path: string; focus?: string }) => {
       fitCenter: true,
       layout: {
         type: "force2",
-        // animate: true, // 设置为 false 可关闭布局动画
-        //maxSpeed: 100,
         linkDistance: 200,
-        //clustering: true,
-        //nodeClusterBy: "cluster",
-        //clusterNodeStrength: 300,
       },
       modes: {
         default: ["zoom-canvas", "drag-canvas", "drag-node"],
@@ -84,8 +79,6 @@ export const NeoGraph = ({ path, focus }: { path: string; focus?: string }) => {
         .getNodes()
         .find((node) => node.getModel().label === focus)
       if (item) {
-        // const box = item.getBBox()
-        // graph.moveTo(box.centerX || box.x, box.centerY || box.y, true)
         item.getNeighbors().forEach((node) => {
           node.update({ size: 40 })
         })

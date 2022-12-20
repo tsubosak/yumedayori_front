@@ -2,11 +2,12 @@ import type { GetStaticPaths, GetStaticProps, NextPage } from "next"
 import { Anchor, Box, Container, Grid, SimpleGrid, Title } from "@mantine/core"
 import React from "react"
 import Head from "next/head"
-import useSWR from "swr"
+import useSWR, { SWRConfig } from "swr"
 import { FullArtist } from "../../types"
 import { IconMusic, IconUserCircle } from "@tabler/icons"
 import Link from "next/link"
 import {
+  API_ENDPOINT,
   CREDITED_AS_JA,
   PARENT_TYPE_JA_BY_CHILD,
   PARENT_TYPE_JA_BY_PARENT,
@@ -15,6 +16,7 @@ import { IconWithText } from "../../components/IconWithText"
 import dynamic from "next/dynamic"
 import { FetchError } from "../../error"
 import Error from "next/error"
+import { generateStaticPaths } from "../../staticPaths"
 const NeoGraph = dynamic(() => import("../../components/NeoGraph"), {
   ssr: false,
 })
@@ -22,10 +24,10 @@ const NeoGraph = dynamic(() => import("../../components/NeoGraph"), {
 const ArtistFetchWrap = ({ artistId }: { artistId: number }) => {
   const { data, error, isLoading } = useSWR<FullArtist>(`/artists/${artistId}`)
 
-  if (error instanceof FetchError)
+  if (!data && error instanceof FetchError)
     return <Error statusCode={error.statusCode}></Error>
-  if (error) return <div>failed to load</div>
-  if (isLoading) return <div>loading...</div>
+  if (!data && error) return <div>failed to load</div>
+  if (!data && isLoading) return <div>loading...</div>
   if (!data) return <></>
 
   return (
@@ -156,19 +158,42 @@ const ArtistFetchWrap = ({ artistId }: { artistId: number }) => {
 
 const ArtistDetailWrap: NextPage<{
   artistId: number
-}> = ({ artistId }) => {
+  fallback: Record<string, FullArtist>
+}> = ({ artistId, fallback }) => {
   if (!artistId) {
     return <></>
   }
-  return <ArtistFetchWrap artistId={artistId} />
+  return (
+    <SWRConfig value={{ fallback }}>
+      <ArtistFetchWrap artistId={artistId} />
+    </SWRConfig>
+  )
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-  return { props: { artistId: params?.id } }
+  const fullArtist = await fetch(API_ENDPOINT + `/artists/${params?.id}`)
+  /*const relationships = await fetch(
+    API_ENDPOINT + `/artists/${params?.id}/relationships`
+  )*/
+  return {
+    props: {
+      artistId: params?.id,
+      fallback: {
+        [`/artists/${params?.id}`]: await fullArtist.json(),
+        /*[`/artists/${params?.id}/relationships`]: relationships.ok
+          ? await relationships.json()
+          : null,*/
+      },
+    },
+  }
 }
 
-export const getStaticPaths: GetStaticPaths = () => {
-  return { paths: [], fallback: true }
+export const getStaticPaths: GetStaticPaths = async () => {
+  const ids = await generateStaticPaths("artist")
+  return {
+    paths: ids.map((id) => ({ params: { id: id.toString() } })),
+    fallback: true,
+  }
 }
 
 export default ArtistDetailWrap
