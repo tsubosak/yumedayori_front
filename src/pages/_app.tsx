@@ -27,6 +27,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           name="viewport"
           content="width=device-width, viewport-fit=cover"
         />
+        <meta name="robots" content="noindex,nofollow"></meta>
       </Head>
       <SWRConfig
         value={{
@@ -52,7 +53,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               <Header height={60}>
                 <Group sx={{ height: "100%" }} px={20} position="apart">
                   <Link prefetch={false} href="/" legacyBehavior>
-                    <Anchor>yumedayori</Anchor>
+                    <Anchor>yumedayori-front</Anchor>
                   </Link>
                   <Select
                     onChange={(val) => {
@@ -74,6 +75,11 @@ function MyApp({ Component, pageProps }: AppProps) {
               >
                 <Center>
                   <Text>yumedayori-front / API Endpoint: {API_ENDPOINT}</Text>
+                </Center>
+                <Center>
+                  <Text>
+                    本システムは卒業研究にあたって開発された実験用実装です。
+                  </Text>
                 </Center>
               </Box>
             }
