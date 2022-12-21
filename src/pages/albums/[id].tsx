@@ -90,9 +90,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const ids =
-    process.env.NODE_ENV === "production"
-      ? await generateStaticPaths("album")
-      : []
+    process.env.MODE === "export" ? await generateStaticPaths("album") : []
   return {
     paths: ids.map((id) => ({ params: { id: id.toString() } })),
     fallback: true,
