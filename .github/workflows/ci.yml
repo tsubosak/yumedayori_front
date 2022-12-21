@@ -68,3 +68,5 @@ jobs:
       - name: Build
         run: |
           yarn build
+        env:
+          NEXT_PUBLIC_API_ENDPOINT: "http://localhost:7000"
